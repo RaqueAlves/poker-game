@@ -1,4 +1,3 @@
-import random
 
 class Card:
     def __init__(self, rank: str, suit: str):
@@ -30,9 +29,13 @@ class Card:
 
     def get_value(self):
         """Retorna o valor da carta para fins de Blackjack."""
-        if self.rank in ['J', 'Q', 'K']:
-            return 10
+        if self.rank == 'J':
+            return 11
+        elif self.rank == 'Q':
+            return 12
+        elif self.rank == 'K':
+            return 13
         elif self.rank == 'A':
-            return 11  # ou 1, isso será ajustado na lógica do jogo
+            return 14
         else:
             return int(self.rank)

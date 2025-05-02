@@ -1,11 +1,19 @@
-from model.PokerGame import PokerGame
-from model.Player import Player
+from controller.PokerGame import PokerGame
+from view.terminal import TerminalView
 
-players = [Player("Alice"), Player("Bob"), Player("Carol"), Player("Dan")]
-game = PokerGame(players)
+from controller.PokerGame import PokerGame
+from view.terminal import TerminalView
 
-for i in range(4):
-    print(f"\n--- Mão {i+1} ---")
-    game.atualizar_posicoes()
-    for p in players:
-        print(f"{p.name} → {p.role}")
+def main():
+    view = TerminalView()
+
+    nome_usuario = view.solicitar_nome()
+    jogo = PokerGame(nome_usuario)
+
+    jogo.iniciar_jogo()
+    dados = jogo.obter_dados_jogadores()
+    view.mostrar_jogadores(dados)
+
+if __name__ == "__main__":
+    main()
+

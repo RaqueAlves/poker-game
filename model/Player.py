@@ -46,7 +46,7 @@ class Player:
     
     @hand.setter
     def hand(self, hand):
-        if isinstance(hand, list):
+        if not isinstance(hand, list):
             return False
         
         for card in hand:
