@@ -1,3 +1,5 @@
+from model.Card import Card
+
 class Player:
     def __init__(self, name, chips=1000):
         self.name = name
@@ -37,3 +39,18 @@ class Player:
     @active.setter
     def active(self, active):
         self.__active = active
+
+    @property
+    def hand(self):
+        return self.__hand
+    
+    @hand.setter
+    def hand(self, hand):
+        if isinstance(hand, list):
+            return False
+        
+        for card in hand:
+            if not isinstance(card, Card):
+                return False
+            
+        self.__hand = hand
