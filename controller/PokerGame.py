@@ -36,7 +36,11 @@ class PokerGame:
                     "cartas": [f"{card.rank} de {card.suit}" for card in player.hand]
                 }
                 for player in self.players
-            ],
+            ]
+        }
+    
+    def obter_dados_cartas_comunitarias(self):
+        return {
             "comunitarias": [f"{card.rank} de {card.suit}" for card in self.community_cards]
         }
 

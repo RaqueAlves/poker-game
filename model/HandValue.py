@@ -2,16 +2,29 @@ from itertools import combinations
 
 class HandValue:
     def __init__(self, hand_cards, community_cards):
-        self.cards = hand_cards + community_cards  # 7 cartas no total
+        self.cards = hand_cards + community_cards
+        self.ranking = {
+            "Royal Flush": 1,
+            "Straight Flush": 2,
+            "Four of a Kind": 3,
+            "Full House": 4,
+            "Flush": 5,
+            "Straight": 6,
+            "Three of a Kind": 7,
+            "Two Pair": 8,
+            "One Pair": 9,
+            "High Card": 10
+        }
 
     def calcular_forca(self):
         melhores_maos = combinations(self.cards, 5)
-        
-        melhor_mao = max(melhores_maos, key=self._avaliar_mao)
 
-        return melhor_mao
+        return melhores_maos
 
     def _avaliar_mao(self, mao):
+        # Aqui você implementaria o algoritmo de ranking:
+        # royal flush, straight flush, quadra, full house, etc.
+        # Vamos usar uma pontuação fictícia como exemplo
         return sum(self._valor_carta(c) for c in mao)
 
     def _valor_carta(self, carta):

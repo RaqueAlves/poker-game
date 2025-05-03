@@ -11,8 +11,10 @@ def main():
     jogo = PokerGame(nome_usuario)
 
     jogo.iniciar_jogo()
-    dados = jogo.obter_dados_jogadores()
-    view.mostrar_jogadores(dados)
+    dados1 = jogo.obter_dados_jogadores()
+    dados2 = jogo.obter_dados_cartas_comunitarias()
+    view.mostrar_jogadores(dados1)
+    view.mostrar_cartas_comunitarias(dados2)
 
 if __name__ == "__main__":
     main()

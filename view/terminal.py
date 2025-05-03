@@ -8,6 +8,7 @@ class TerminalView:
             for carta in jogador["cartas"]:
                 print(f"  - {carta}")
 
+    def mostrar_cartas_comunitarias(self, dados):
         print("\n=== Cartas Comunitárias ===")
         for carta in dados["comunitarias"]:
             print(f"  - {carta}")
