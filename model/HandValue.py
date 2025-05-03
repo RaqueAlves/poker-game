@@ -19,17 +19,16 @@ class HandValue:
 
     def calcular_forca(self):
         melhores_maos = [list(comb) for comb in combinations(self.cards, 5)]
-        melhor_mao = None
-        melhor_rank = float("inf")
+        melhor_info = None
 
         for mao in melhores_maos:
-            rank = self._avaliar_mao(mao)
-            if self.ranking[rank] < melhor_rank:
-                melhor_rank = self.ranking[rank]
-                melhor_mao = mao
+            nome, rank_numerico, carta_alta = self._avaliar_mao(mao)
+            if not melhor_info or rank_numerico < melhor_info[1] or (
+                rank_numerico == melhor_info[1] and carta_alta > melhor_info[2]
+            ):
+                melhor_info = (nome, rank_numerico, carta_alta)
 
-        print(f"Melhor mão: {melhor_mao} ({self._avaliar_mao(melhor_mao)})")
-        return melhor_mao
+        return melhor_info  # Ex: ("Flush", 5, 13)
 
     def _avaliar_mao(self, mao):
         valores = sorted([self._valor_carta(carta) for carta in mao], reverse=True)
@@ -42,23 +41,28 @@ class HandValue:
 
         if eh_flush and eh_straight:
             if valores[0] == 14 and valores[1] == 13:
-                return "Royal Flush"
-            return "Straight Flush"
+                return ("Royal Flush", self.ranking["Royal Flush"], 14)
+            return ("Straight Flush", self.ranking["Straight Flush"], valores[0])
         if 4 in contagem_valores.values():
-            return "Four of a Kind"
+            quadra = [v for v, c in contagem_valores.items() if c == 4][0]
+            return ("Four of a Kind", self.ranking["Four of a Kind"], quadra)
         if 3 in contagem_valores.values() and 2 in contagem_valores.values():
-            return "Full House"
+            trio = [v for v, c in contagem_valores.items() if c == 3][0]
+            return ("Full House", self.ranking["Full House"], trio)
         if eh_flush:
-            return "Flush"
+            return ("Flush", self.ranking["Flush"], valores[0])
         if eh_straight:
-            return "Straight"
+            return ("Straight", self.ranking["Straight"], valores[0])
         if 3 in contagem_valores.values():
-            return "Three of a Kind"
+            trio = [v for v, c in contagem_valores.items() if c == 3][0]
+            return ("Three of a Kind", self.ranking["Three of a Kind"], trio)
         if list(contagem_valores.values()).count(2) == 2:
-            return "Two Pair"
+            pares = sorted([v for v, c in contagem_valores.items() if c == 2], reverse=True)
+            return ("Two Pair", self.ranking["Two Pair"], pares[0])
         if 2 in contagem_valores.values():
-            return "One Pair"
-        return "High Card"
+            par = [v for v, c in contagem_valores.items() if c == 2][0]
+            return ("One Pair", self.ranking["One Pair"], par)
+        return ("High Card", self.ranking["High Card"], valores[0])
 
     def _verifica_straight(self, valores):
         valores = list(sorted(set(valores), reverse=True))
@@ -67,7 +71,6 @@ class HandValue:
         for i in range(len(valores) - 4):
             if valores[i] - valores[i + 4] == 4:
                 return True
-        # Checa caso especial A-2-3-4-5
         if set([14, 2, 3, 4, 5]).issubset(set(valores)):
             return True
         return False
@@ -79,4 +82,3 @@ class HandValue:
             '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
         }
         return valores.get(carta.rank, 0)
-

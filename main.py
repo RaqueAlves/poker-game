@@ -15,7 +15,7 @@ def main():
     dados2 = jogo.obter_dados_cartas_comunitarias()
     view.mostrar_jogadores(dados1)
     view.mostrar_cartas_comunitarias(dados2)
-    jogo.avalia_maos()
+    jogo.escolhe_vencedor()
 
 if __name__ == "__main__":
     main()

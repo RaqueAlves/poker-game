@@ -44,10 +44,21 @@ class PokerGame:
         self.deck.draw_card()  # Queima
         self.community_cards.append(self.deck.draw_card())  # River
 
-    def avalia_maos(self):
-        for player in self.players:
-            avaliador = HandValue(player.hand, self.community_cards)
-            melhor_mao = avaliador.calcular_forca()
+    def escolhe_vencedor(self):
+        melhor_mao = None
+        vencedor = None
+
+        for jogador in self.players:
+            resultado = HandValue(jogador.hand, self.community_cards).calcular_forca()
+            print(f"{jogador.name}: {resultado}")  # Para depuração
+
+            if (melhor_mao is None or
+                resultado[1] < melhor_mao[1] or
+                (resultado[1] == melhor_mao[1] and resultado[2] > melhor_mao[2])):
+                melhor_mao = resultado
+                vencedor = jogador
+
+        print(f"\nVencedor: {vencedor.name} com {melhor_mao[0]} (carta mais alta: {melhor_mao[2]})")
 
     def obter_dados_jogadores(self):
         return {
