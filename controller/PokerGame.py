@@ -1,5 +1,6 @@
 from model.Player import Player
 from model.Deck import Deck
+from model.HandValue import HandValue
 
 class PokerGame:
     def __init__(self, usuario):
@@ -10,12 +11,28 @@ class PokerGame:
             Player("Bob"),
             Player("Carol")
         ]
+        self.community_cards = []
         self.dealer_index = 0
 
     def iniciar_jogo(self):
         self.atualizar_posicoes()
         self.distribuir_cartas()
-        self.distribuir_cartas_comunitarias()  # Agora aqui
+        self.distribuir_cartas_comunitarias()
+
+    def atualizar_posicoes(self):
+        num_players = len(self.players)
+        for player in self.players:
+            player.role = "normal"
+        
+        self.players[self.dealer_index].role = "dealer"
+        self.players[(self.dealer_index + 1) % num_players].role = "small_blind"
+        self.players[(self.dealer_index + 2) % num_players].role = "big_blind"
+
+        self.dealer_index = (self.dealer_index + 1) % num_players
+
+    def distribuir_cartas(self):
+        for player in self.players:
+            player.hand = [self.deck.draw_card(), self.deck.draw_card()]
 
     def distribuir_cartas_comunitarias(self):
         self.deck.draw_card()  # Queima
@@ -26,6 +43,11 @@ class PokerGame:
 
         self.deck.draw_card()  # Queima
         self.community_cards.append(self.deck.draw_card())  # River
+
+    def avalia_maos(self):
+        for player in self.players:
+            avaliador = HandValue(player.hand, self.community_cards)
+            melhor_mao = avaliador.calcular_forca()
 
     def obter_dados_jogadores(self):
         return {
@@ -43,19 +65,3 @@ class PokerGame:
         return {
             "comunitarias": [f"{card.rank} de {card.suit}" for card in self.community_cards]
         }
-
-    def atualizar_posicoes(self):
-        num_players = len(self.players)
-        for player in self.players:
-            player.role = "normal"
-        
-        self.players[self.dealer_index].role = "dealer"
-        self.players[(self.dealer_index + 1) % num_players].role = "small_blind"
-        self.players[(self.dealer_index + 2) % num_players].role = "big_blind"
-
-        self.dealer_index = (self.dealer_index + 1) % num_players
-
-    def distribuir_cartas(self):
-        for player in self.players:
-            player.hand = [self.deck.draw_card(), self.deck.draw_card()]
-

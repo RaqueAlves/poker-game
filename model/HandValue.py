@@ -19,13 +19,10 @@ class HandValue:
     def calcular_forca(self):
         melhores_maos = combinations(self.cards, 5)
 
-        return melhores_maos
+        return next(melhores_maos)
 
     def _avaliar_mao(self, mao):
-        # Aqui você implementaria o algoritmo de ranking:
-        # royal flush, straight flush, quadra, full house, etc.
-        # Vamos usar uma pontuação fictícia como exemplo
-        return sum(self._valor_carta(c) for c in mao)
+        pass
 
     def _valor_carta(self, carta):
         valores = {
