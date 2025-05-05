@@ -54,3 +54,6 @@ class Player:
                 return False
             
         self.__hand = hand
+    
+    def pagar(self, chips):
+        self.chips -= chips
