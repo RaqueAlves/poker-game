@@ -1,25 +1,30 @@
 from model.Player import Player
 from model.Deck import Deck
 from model.HandValue import HandValue
+import random
 
 class PokerGame:
     def __init__(self, usuario):
         self.deck = Deck()
         self.players = [
             Player(usuario),
-            Player("Alice"),
-            Player("Bob"),
-            Player("Carol")
+            Player("Jogador 1"),
+            Player("Jogador 2"),
+            Player("Jogador 3")
         ]
         self.community_cards = []
         self.dealer_index = 0
+        self.pot = 0
 
     def iniciar_jogo(self):
         self.atualizar_posicoes()
-        self.distribuir_cartas()
-        self.distribuir_cartas_comunitarias()
+        self.pre_flop()
+        self.flop()
+        self.turn()
+        self.river()
 
     def atualizar_posicoes(self):
+        self.shuffle()
         num_players = len(self.players)
         for player in self.players:
             player.role = "normal"
@@ -30,19 +35,40 @@ class PokerGame:
 
         self.dealer_index = (self.dealer_index + 1) % num_players
 
-    def distribuir_cartas(self):
+    def shuffle(self):
+        random.shuffle(self.players)
+
+    def pre_flop(self):
         for player in self.players:
             player.hand = [self.deck.draw_card(), self.deck.draw_card()]
+        self.rodada_de_apostas()
 
-    def distribuir_cartas_comunitarias(self):
+    def flop(self):
         self.deck.draw_card()  # Queima
         self.community_cards = [self.deck.draw_card() for _ in range(3)]  # Flop
+        self.rodada_de_apostas()
 
+    def turn(self):
         self.deck.draw_card()  # Queima
         self.community_cards.append(self.deck.draw_card())  # Turn
+        self.rodada_de_apostas()
 
+    def river(self):
         self.deck.draw_card()  # Queima
         self.community_cards.append(self.deck.draw_card())  # River
+        self.rodada_de_apostas()
+    
+    def adicionar_ao_pote(self, fichas):
+        self.pot += fichas
+
+    def resetar_pote(self):
+        self.pot = 0
+    
+    def rodada_de_apostas(self):
+        while True:
+            for jogador in self.players:
+                if jogador.active:
+                    print(f"{jogador.name} está ativo.")
 
     def escolhe_vencedor(self):
         melhor_mao = None
@@ -50,7 +76,7 @@ class PokerGame:
 
         for jogador in self.players:
             resultado = HandValue(jogador.hand, self.community_cards).calcular_forca()
-            print(f"{jogador.name}: {resultado}")  # Para depuração
+            print(f"{jogador.name}: {resultado}")
 
             if (melhor_mao is None or
                 resultado[1] < melhor_mao[1] or
