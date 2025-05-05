@@ -65,10 +65,7 @@ class PokerGame:
         self.pot = 0
     
     def rodada_de_apostas(self):
-        while True:
-            for jogador in self.players:
-                if jogador.active:
-                    print(f"{jogador.name} está ativo.")
+        pass
 
     def escolhe_vencedor(self):
         melhor_mao = None
