@@ -50,34 +50,70 @@ class PokerGame:
     def resetar_pote(self):
         self.pot = 0
 
-    def rodada_de_apostas(self, acao):
-        print(acao)
+    def rodada_de_apostas(self):
+        dicionario = {
+            "1": "Check",
+            "2": "Bet",
+            "3": "Call",
+            "4": "Raise",
+            "5": "Fold"
+        }
         for jogador in self.players:
-            print(acao)
             if jogador.active:
-                print(acao)
                 if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
-                    print(acao)
+                    print("\n=== Rodada de Apostas ===")
+                    print("1. Check(Passar)")
+                    print("2. Bet(Apostar)")
+                    print("3. Call(Pagar)")
+                    print("4. Raise(Aumentar)")
+                    print("5. Fold(Desistir)\n")
+                    acao = input("Escolha sua ação: ")
+
                     if acao == "5":
                         jogador.active = False
                     elif acao == "4":
                         self.aposta_atual += 10
                         jogador.pagar(self.aposta_atual)
                         self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao == "3" or acao == "2":
+                    elif acao == "3":
                         jogador.pagar(self.aposta_atual)
                         self.adicionar_ao_pote(self.aposta_atual)
+                    elif acao == "2":
+                        jogador.pagar(10)
+                        self.adicionar_ao_pote(10)
+                        self.aposta_atual = 10
                     elif acao == "1":
                         pass
 
-                    print(f"Escolha de {jogador.name}: {acao}")
+                    print(f"\nEscolha de {jogador.name}: {dicionario[acao]}")
                     print(f"Fichas no Pote: {self.pot}")
                     print(f"Valor da aposta atual: {self.aposta_atual}\n")
-                else:
-                    acao_ia = self.decidir_acao_jogador_ia(jogador)
-                    print(f"Escolha de {jogador.name}: {acao_ia}")
-                    print(f"Fichas no Pote: {self.pot}")
-                    print(f"Valor da aposta atual: {self.aposta_atual}\n")
+        
+        # Depois que a jogadora agiu, os bots agem com base na aposta atual
+        for jogador in self.players:
+            if jogador.active and jogador.name in ["Jogador 1", "Jogador 2", "Jogador 3"]:
+                acao_ia = self.decidir_acao_jogador_ia(jogador)
+
+                if acao_ia == "fold":
+                    jogador.active = False
+                elif acao_ia == "raise":
+                    self.aposta_atual += 10
+                    jogador.pagar(self.aposta_atual)
+                    self.adicionar_ao_pote(self.aposta_atual)
+                elif acao_ia == "call":
+                    jogador.pagar(self.aposta_atual)
+                    self.adicionar_ao_pote(self.aposta_atual)
+                elif acao_ia == "bet":
+                    jogador.pagar(10)
+                    self.adicionar_ao_pote(10)
+                    self.aposta_atual = 10
+                elif acao_ia == "check":
+                    pass
+
+                print(f"\nEscolha de {jogador.name}: {acao_ia}")
+                print(f"Fichas no Pote: {self.pot}")
+                print(f"Valor da aposta atual: {self.aposta_atual}\n")
+
 
     def decidir_acao_jogador_ia(self, jogador: Player):
         if jogador.chips < self.aposta_atual:
@@ -91,26 +127,7 @@ class PokerGame:
             acoes = ["call", "raise", "fold"]
 
         escolha = random.choices(acoes, weights=[0.8, 0.15, 0.05])[0]
-
-        if escolha == "fold":
-            jogador.active = False
-            return escolha
-        elif escolha == "bet":
-            jogador.pagar(10)
-            self.adicionar_ao_pote(10)
-            self.aposta_atual += 10
-            return escolha
-        elif escolha == "check":
-            return escolha
-        elif escolha == "call":
-            jogador.pagar(self.aposta_atual)
-            self.adicionar_ao_pote(self.aposta_atual)
-            return escolha
-        elif escolha == "raise":
-            self.aposta_atual += 10
-            jogador.pagar(self.aposta_atual)
-            self.adicionar_ao_pote(self.aposta_atual)
-            return escolha
+        return escolha
 
     def escolhe_vencedor(self):
         melhor_mao = None
