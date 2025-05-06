@@ -13,7 +13,14 @@ class TerminalView:
         for carta in dados["comunitarias"]:
             print(f"  - {carta}")
     
-    def mostrar_opcoes_de_apostas(self):
+    def coletar_acoes(self):
+        dicionario = {
+            "1": "Check",
+            "2": "Bet",
+            "3": "Call",
+            "4": "Raise",
+            "5": "Fold"
+        }
         print("\n=== Rodada de Apostas ===\n" \
         "1. Check(Passar)\n" \
         "2. Bet(Apostar)\n" \
@@ -22,7 +29,7 @@ class TerminalView:
         "5. Fold(Desistir)\n")
         choose = input()
         if choose in ["1", "2", "3", "4", "5"]:
-            return choose
+            return dicionario[choose]
     
     def solicitar_nome(self):
         return input("Digite seu nome antes de iniciar: ")
