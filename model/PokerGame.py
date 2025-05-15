@@ -89,7 +89,6 @@ class PokerGame:
                     print(f"Fichas no Pote: {self.pot}")
                     print(f"Valor da aposta atual: {self.aposta_atual}\n")
         
-        # Depois que a jogadora agiu, os bots agem com base na aposta atual
         for jogador in self.players:
             if jogador.active and jogador.name in ["Jogador 1", "Jogador 2", "Jogador 3"]:
                 acao_ia = self.decidir_acao_jogador_ia(jogador)
