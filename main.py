@@ -1,7 +1,3 @@
-from model.PokerGame import PokerGame
-from view.TerminalView import TerminalView
-
-from model.PokerGame import PokerGame
 from view.TerminalView import TerminalView
 
 from controller.PokerGameController import PokerGameController

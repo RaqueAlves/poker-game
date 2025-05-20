@@ -17,22 +17,28 @@ class PokerGameController:
         self.view.mostrar_jogadores(dados_jogadores)
 
         # Pré-flop
-        self.jogo.rodada_de_apostas()
+        acao = self.view.coletar_acoes()
+        self.jogo.rodada_de_apostas(acao)
 
         # Flop
         self.jogo.flop()
         self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        self.jogo.rodada_de_apostas()
+        acao1 = self.view.coletar_acoes()
+        self.jogo.rodada_de_apostas(acao1)
 
         # Turn
         self.jogo.proxima_rodada()
         self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        self.jogo.rodada_de_apostas()
+        acao2 = self.view.coletar_acoes()
+        self.jogo.rodada_de_apostas(acao2)
 
         # River
         self.jogo.proxima_rodada()
         self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        self.jogo.rodada_de_apostas()
+        acao3 = self.view.coletar_acoes()
+        self.jogo.rodada_de_apostas(acao3)
 
         # Final
-        self.jogo.escolhe_vencedor()
+        jogador, combinacao, carta, pot, chips = self.jogo.escolhe_vencedor()
+        self.view.mostrar(f"\nVencedor: {jogador} com {combinacao} e carta mais alta: {carta}\n" \
+              f"Ganhou {pot}fichas - Total: {chips}")

@@ -50,42 +50,27 @@ class PokerGame:
     def resetar_pote(self):
         self.pot = 0
 
-    def rodada_de_apostas(self):
-        dicionario = {
-            "1": "Check",
-            "2": "Bet",
-            "3": "Call",
-            "4": "Raise",
-            "5": "Fold"
-        }
+    def rodada_de_apostas(self, acao):
         for jogador in self.players:
             if jogador.active:
                 if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
-                    print("\n=== Rodada de Apostas ===")
-                    print("1. Check(Passar)")
-                    print("2. Bet(Apostar)")
-                    print("3. Call(Pagar)")
-                    print("4. Raise(Aumentar)")
-                    print("5. Fold(Desistir)\n")
-                    acao = input("Escolha sua ação: ")
-
-                    if acao == "5":
+                    if acao == "Fold":
                         jogador.active = False
-                    elif acao == "4":
+                    elif acao == "Raise":
                         self.aposta_atual += 10
                         jogador.pagar(self.aposta_atual)
                         self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao == "3":
+                    elif acao == "Call":
                         jogador.pagar(self.aposta_atual)
                         self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao == "2":
+                    elif acao == "Bet":
                         jogador.pagar(10)
                         self.adicionar_ao_pote(10)
                         self.aposta_atual = 10
-                    elif acao == "1":
+                    elif acao == "Check":
                         pass
 
-                    print(f"\nEscolha de {jogador.name}: {dicionario[acao]}")
+                    print(f"\nEscolha de {jogador.name}: {acao}")
                     print(f"Fichas no Pote: {self.pot}")
                     print(f"Valor da aposta atual: {self.aposta_atual}\n")
         
@@ -146,8 +131,7 @@ class PokerGame:
                     total = vencedor.chips + self.pot
                     vencedor.chips = total
 
-        print(f"\nVencedor: {vencedor.name} com {melhor_mao[0]} e carta mais alta: {melhor_mao[2]}\n" \
-              f"Ganhou {self.pot}fichas - Total: {jogador.chips}")
+        return vencedor.name, melhor_mao[0], melhor_mao[2], self.pot, jogador.chips
 
     def obter_dados_jogadores(self):
         return {

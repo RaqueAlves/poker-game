@@ -33,3 +33,6 @@ class TerminalView:
     
     def solicitar_nome(self):
         return input("Digite seu nome antes de iniciar: ")
+    
+    def mostrar(self, mensagem):
+        print(mensagem)
