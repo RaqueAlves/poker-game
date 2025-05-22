@@ -12,6 +12,18 @@ class TerminalView:
         print("\n=== Cartas Comunitárias ===")
         for carta in dados["comunitarias"]:
             print(f"  - {carta}")
+
+    def mostrar_escolha_jogador(self, dados):
+        for dado in dados:
+            print(f"Escolha de {dado[0]}: {dado[1]} "
+                  f"Fichas no Pote: {dado[2]} "
+                  f"Valor da aposta atual: {dado[3]} ")
+    
+    def mostrar_resultado(self, dados):
+        print("\n=== Mãos dos Jogadores ===")
+        for resultado in dados["Resultado"]:
+            print(f"Nome: {resultado["nome"]}")
+            print(f"Mão: {resultado["resultado"]}\n")
     
     def coletar_acoes(self):
         dicionario = {

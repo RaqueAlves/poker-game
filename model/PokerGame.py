@@ -51,6 +51,7 @@ class PokerGame:
         self.pot = 0
 
     def rodada_de_apostas(self, acao):
+        lista_acao = []
         for jogador in self.players:
             if jogador.active:
                 if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
@@ -69,35 +70,41 @@ class PokerGame:
                         self.aposta_atual = 10
                     elif acao == "Check":
                         pass
-
-                    print(f"\nEscolha de {jogador.name}: {acao}")
-                    print(f"Fichas no Pote: {self.pot}")
-                    print(f"Valor da aposta atual: {self.aposta_atual}\n")
+                    
+                    lista = []
+                    lista.append(jogador.name)
+                    lista.append(acao)
+                    lista.append(self.pot)
+                    lista.append(self.aposta_atual)
+                    lista_acao.append(lista)
         
-        for jogador in self.players:
-            if jogador.active and jogador.name in ["Jogador 1", "Jogador 2", "Jogador 3"]:
-                acao_ia = self.decidir_acao_jogador_ia(jogador)
+                if jogador.name in ["Jogador 1", "Jogador 2", "Jogador 3"]:
+                    acao_ia = self.decidir_acao_jogador_ia(jogador)
 
-                if acao_ia == "fold":
-                    jogador.active = False
-                elif acao_ia == "raise":
-                    self.aposta_atual += 10
-                    jogador.pagar(self.aposta_atual)
-                    self.adicionar_ao_pote(self.aposta_atual)
-                elif acao_ia == "call":
-                    jogador.pagar(self.aposta_atual)
-                    self.adicionar_ao_pote(self.aposta_atual)
-                elif acao_ia == "bet":
-                    jogador.pagar(10)
-                    self.adicionar_ao_pote(10)
-                    self.aposta_atual = 10
-                elif acao_ia == "check":
-                    pass
+                    if acao_ia == "fold":
+                        jogador.active = False
+                    elif acao_ia == "raise":
+                        self.aposta_atual += 10
+                        jogador.pagar(self.aposta_atual)
+                        self.adicionar_ao_pote(self.aposta_atual)
+                    elif acao_ia == "call":
+                        jogador.pagar(self.aposta_atual)
+                        self.adicionar_ao_pote(self.aposta_atual)
+                    elif acao_ia == "bet":
+                        jogador.pagar(10)
+                        self.adicionar_ao_pote(10)
+                        self.aposta_atual = 10
+                    elif acao_ia == "check":
+                        pass
 
-                print(f"\nEscolha de {jogador.name}: {acao_ia}")
-                print(f"Fichas no Pote: {self.pot}")
-                print(f"Valor da aposta atual: {self.aposta_atual}\n")
-
+                    lista = []
+                    lista.append(jogador.name)
+                    lista.append(acao_ia)
+                    lista.append(self.pot)
+                    lista.append(self.aposta_atual)
+                    lista_acao.append(lista)
+        
+        return lista_acao
 
     def decidir_acao_jogador_ia(self, jogador: Player):
         if jogador.chips < self.aposta_atual:
@@ -119,15 +126,15 @@ class PokerGame:
 
         for jogador in self.players:
             if jogador.active:
-                resultado = HandValue(jogador.hand, self.community_cards).calcular_forca()
-                print(f"{jogador.name}: {resultado}")
+                result, mao_jogador = HandValue(jogador.hand, self.community_cards).calcular_forca()
+                print(mao_jogador)
+                jogador.resultado = mao_jogador
 
                 if (melhor_mao is None or
-                    resultado[1] < melhor_mao[1] or
-                    (resultado[1] == melhor_mao[1] and resultado[2] > melhor_mao[2])):
-                    melhor_mao = resultado
+                    result[1] < melhor_mao[1] or
+                    (result[1] == melhor_mao[1] and result[2] > melhor_mao[2])):
+                    melhor_mao = result
                     vencedor = jogador
-                    print(jogador.chips)
                     total = vencedor.chips + self.pot
                     vencedor.chips = total
 
@@ -140,6 +147,17 @@ class PokerGame:
                     "nome": player.name,
                     "role": player.role,
                     "cartas": [f"{card.rank} de {card.suit}" for card in player.hand]
+                }
+                for player in self.players
+            ]
+        }
+    
+    def obter_resultado_jogadores(self):
+        return {
+            "Resultado": [
+                {
+                    "nome": player.name,
+                    "resultado": player.resultado
                 }
                 for player in self.players
             ]

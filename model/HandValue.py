@@ -18,17 +18,19 @@ class HandValue:
         }
 
     def calcular_forca(self):
-        melhores_maos = [list(comb) for comb in combinations(self.cards, 5)]
+        todas_combinacoes = [list(comb) for comb in combinations(self.cards, 5)]
+        melhor_mao = None
         melhor_info = None
 
-        for mao in melhores_maos:
+        for mao in todas_combinacoes:
             nome, rank_numerico, carta_alta = self._avaliar_mao(mao)
             if not melhor_info or rank_numerico < melhor_info[1] or (
                 rank_numerico == melhor_info[1] and carta_alta > melhor_info[2]
             ):
+                melhor_mao = mao
                 melhor_info = (nome, rank_numerico, carta_alta)
 
-        return melhor_info  # Ex: ("Flush", 5, 13)
+        return melhor_info, melhor_mao  # Ex: ("Flush", 5, 13), []
 
     def _avaliar_mao(self, mao):
         valores = sorted([self._valor_carta(carta) for carta in mao], reverse=True)

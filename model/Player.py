@@ -7,6 +7,7 @@ class Player:
         self.hand = []
         self.role = "normal"
         self.active = True
+        self.resultado = []
 
     @property
     def name(self):
@@ -57,3 +58,20 @@ class Player:
     
     def pagar(self, chips):
         self.chips -= chips
+
+    @property
+    def resultado(self):
+        return self.__resultado
+    
+    @resultado.setter
+    def resultado(self, resultado):
+        if not isinstance(resultado, list):
+            print("não é uma lista")
+            return False
+        
+        for card in resultado:
+            if not isinstance(card, Card):
+                print("não é uma carta")
+                return False
+        
+        self.__resultado = resultado
