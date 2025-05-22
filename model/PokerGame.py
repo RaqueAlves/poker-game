@@ -31,6 +31,10 @@ class PokerGame:
     
     def obter_jogador_por_role(self, role):
         return next((j for j in self.players if j.role == role), None)
+    
+    def ordem_apostas(self):
+        start_index = (self.dealer_index + 3) % len(self.players)
+        return self.players[start_index] + self.players[:start_index]
 
     def shuffle(self):
         random.shuffle(self.players)
@@ -71,8 +75,10 @@ class PokerGame:
         self.pot = 0
 
     def rodada_de_apostas(self, acao):
+        ordem = self.ordem_apostas()
         lista_acao = []
-        for jogador in self.players:
+
+        for jogador in ordem:
             if jogador.active:
                 if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
                     if acao == "Fold":
@@ -84,19 +90,10 @@ class PokerGame:
                     elif acao == "Call":
                         jogador.pagar(self.aposta_atual)
                         self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao == "Bet":
-                        jogador.pagar(10)
-                        self.adicionar_ao_pote(10)
-                        self.aposta_atual = 10
                     elif acao == "Check":
                         pass
                     
-                    lista = []
-                    lista.append(jogador.name)
-                    lista.append(acao)
-                    lista.append(self.pot)
-                    lista.append(self.aposta_atual)
-                    lista_acao.append(lista)
+                    lista_acao.append([jogador.name, acao, self.pot, self.aposta_atual])
         
                 if jogador.name in ["Jogador 1", "Jogador 2", "Jogador 3"]:
                     acao_ia = self.decidir_acao_jogador_ia(jogador)
@@ -110,19 +107,10 @@ class PokerGame:
                     elif acao_ia == "call":
                         jogador.pagar(self.aposta_atual)
                         self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao_ia == "bet":
-                        jogador.pagar(10)
-                        self.adicionar_ao_pote(10)
-                        self.aposta_atual = 10
                     elif acao_ia == "check":
                         pass
 
-                    lista = []
-                    lista.append(jogador.name)
-                    lista.append(acao_ia)
-                    lista.append(self.pot)
-                    lista.append(self.aposta_atual)
-                    lista_acao.append(lista)
+                    lista_acao.append([jogador.name, acao_ia, self.pot, self.aposta_atual])
         
         return lista_acao
 
@@ -133,7 +121,7 @@ class PokerGame:
         acoes = []
 
         if self.aposta_atual == 0:
-            acoes = ["check", "bet", "fold"]
+            acoes = ["check", "check", "fold"]
         else:
             acoes = ["call", "raise", "fold"]
 

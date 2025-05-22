@@ -32,19 +32,17 @@ class TerminalView:
     def coletar_acoes(self):
         dicionario = {
             "1": "Check",
-            "2": "Bet",
-            "3": "Call",
-            "4": "Raise",
-            "5": "Fold"
+            "2": "Call",
+            "3": "Raise",
+            "4": "Fold"
         }
         print("\n=== Rodada de Apostas ===\n" \
         "1. Check(Passar)\n" \
-        "2. Bet(Apostar)\n" \
-        "3. Call(Pagar)\n" \
-        "4. Raise(Aumentar)\n" \
-        "5. Fold(Desistir)\n")
+        "2. Call(Pagar)\n" \
+        "3. Raise(Aumentar)\n" \
+        "4. Fold(Desistir)\n")
         choose = input()
-        if choose in ["1", "2", "3", "4", "5"]:
+        if choose in ["1", "2", "3", "4"]:
             return dicionario[choose]
     
     def solicitar_nome(self):
