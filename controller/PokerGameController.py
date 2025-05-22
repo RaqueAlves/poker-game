@@ -16,6 +16,8 @@ class PokerGameController:
         self.view.mostrar_jogadores(self.jogo.obter_dados_jogadores())
 
         # Pré-flop
+        small_blind, big_blind = self.jogo.aplicar_blinds()
+        self.view.mostrar_blinds(small_blind, big_blind)
         acao = self.view.coletar_acoes()
         descricao = self.jogo.rodada_de_apostas(acao)
         self.view.mostrar_escolha_jogador(descricao)

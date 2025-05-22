@@ -38,6 +38,23 @@ class PokerGame:
     def distribui_cartas(self):
         for player in self.players:
             player.hand = [self.deck.draw_card(), self.deck.draw_card()]
+    
+    def aplicar_blinds(self):
+        small_blind_player = self.obter_jogador_por_role("small_blind")
+        big_blind_player = self.obter_jogador_por_role("big_blind")
+
+        small_blind_valor = 5
+        big_blind_valor = 10
+
+        small_blind_player.pagar(small_blind_valor)
+        big_blind_player.pagar(big_blind_valor)
+
+        self.adicionar_ao_pote(small_blind_valor)
+        self.adicionar_ao_pote(big_blind_valor)
+
+        self.aposta_atual = big_blind_valor
+
+        return small_blind_player.name, big_blind_player.name
 
     def flop(self):
         self.deck.draw_card()  # Queima

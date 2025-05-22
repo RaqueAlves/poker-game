@@ -25,6 +25,10 @@ class TerminalView:
             print(f"Nome: {resultado["nome"]}")
             print(f"Mão: {resultado["resultado"]}\n")
     
+    def mostrar_blinds(self, small_blind, big_blind):
+        print(f"Small Blind {small_blind} pagou 5 fichas\n"
+              f"Big Blind {big_blind} pagou 10 fichas\n")
+    
     def coletar_acoes(self):
         dicionario = {
             "1": "Check",
