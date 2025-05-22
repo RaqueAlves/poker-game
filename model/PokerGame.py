@@ -28,6 +28,9 @@ class PokerGame:
         self.players[(self.dealer_index + 2) % num_players].role = "big_blind"
 
         self.dealer_index = (self.dealer_index + 1) % num_players
+    
+    def obter_jogador_por_role(self, role):
+        return next((j for j in self.players if j.role == role), None)
 
     def shuffle(self):
         random.shuffle(self.players)
