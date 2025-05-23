@@ -18,33 +18,39 @@ class PokerGameController:
         # Pré-flop
         small_blind, big_blind = self.jogo.aplicar_blinds()
         self.view.mostrar_blinds(small_blind, big_blind)
-        acao = self.view.coletar_acoes()
-        descricao = self.jogo.rodada_de_apostas(acao)
-        self.view.mostrar_escolha_jogador(descricao)
+        self.rodada_de_apostas()
 
         # Flop
         self.jogo.flop()
         self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        acao1 = self.view.coletar_acoes()
-        descricao1 = self.jogo.rodada_de_apostas(acao1)
-        self.view.mostrar_escolha_jogador(descricao1)
+        self.rodada_de_apostas()
 
         # Turn
         self.jogo.proxima_rodada()
         self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        acao2 = self.view.coletar_acoes()
-        descricao2 = self.jogo.rodada_de_apostas(acao2)
-        self.view.mostrar_escolha_jogador(descricao2)
+        self.rodada_de_apostas()
 
         # River
         self.jogo.proxima_rodada()
         self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        acao3 = self.view.coletar_acoes()
-        descricao3 = self.jogo.rodada_de_apostas(acao3)
-        self.view.mostrar_escolha_jogador(descricao3)
+        self.rodada_de_apostas()
 
         # Final
         jogador, combinacao, carta, pot, chips = self.jogo.escolhe_vencedor()
         self.view.mostrar_resultado(self.jogo.obter_resultado_jogadores())
         self.view.mostrar(f"\nVencedor: {jogador} com {combinacao} e carta mais alta: {carta}\n" \
               f"Ganhou {pot}fichas - Total: {chips}")
+        
+    def rodada_de_apostas(self):
+        ordem = self.jogo.ordem_apostas()
+
+        for jogador in ordem:
+            print(jogador.name)
+            if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
+                acao = self.view.coletar_acoes()
+            else:
+                acao = self.jogo.decide_acao_jogador_ia(jogador)
+
+            if acao is not None:
+                aposta = self.jogo.aplica_aposta(acao, jogador)
+                self.view.mostrar_escolha_jogador(aposta)

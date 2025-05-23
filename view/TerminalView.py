@@ -14,10 +14,9 @@ class TerminalView:
             print(f"  - {carta}")
 
     def mostrar_escolha_jogador(self, dados):
-        for dado in dados:
-            print(f"Escolha de {dado[0]}: {dado[1]} "
-                  f"Fichas no Pote: {dado[2]} "
-                  f"Valor da aposta atual: {dado[3]} ")
+        print(f"Escolha de {dados[0]}: {dados[1]} "
+                f"Fichas no Pote: {dados[2]} "
+                f"Valor da aposta atual: {dados[3]} ")
     
     def mostrar_resultado(self, dados):
         print("\n=== Mãos dos Jogadores ===")
@@ -26,7 +25,7 @@ class TerminalView:
             print(f"Mão: {resultado["resultado"]}\n")
     
     def mostrar_blinds(self, small_blind, big_blind):
-        print(f"Small Blind {small_blind} pagou 5 fichas\n"
+        print(f"\nSmall Blind {small_blind} pagou 5 fichas\n"
               f"Big Blind {big_blind} pagou 10 fichas\n")
     
     def coletar_acoes(self):

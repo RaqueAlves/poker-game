@@ -20,21 +20,21 @@ class PokerGame:
     def atualizar_posicoes(self):
         self.shuffle()
         num_players = len(self.players)
+        self.dealer_index = (self.dealer_index + 1) % num_players
+
         for player in self.players:
             player.role = "normal"
         
         self.players[self.dealer_index].role = "dealer"
         self.players[(self.dealer_index + 1) % num_players].role = "small_blind"
         self.players[(self.dealer_index + 2) % num_players].role = "big_blind"
-
-        self.dealer_index = (self.dealer_index + 1) % num_players
     
     def obter_jogador_por_role(self, role):
         return next((j for j in self.players if j.role == role), None)
     
     def ordem_apostas(self):
         start_index = (self.dealer_index + 3) % len(self.players)
-        return self.players[start_index] + self.players[:start_index]
+        return self.players[start_index:] + self.players[:start_index]
 
     def shuffle(self):
         random.shuffle(self.players)
@@ -74,59 +74,39 @@ class PokerGame:
     def resetar_pote(self):
         self.pot = 0
 
-    def rodada_de_apostas(self, acao):
-        ordem = self.ordem_apostas()
-        lista_acao = []
+    def aplica_aposta(self, acao, jogador: Player):
+        if jogador.active:
+            if acao == "Fold":
+                jogador.active = False
+            elif acao == "Raise":
+                self.aposta_atual += 10
+                jogador.pagar(self.aposta_atual)
+                self.adicionar_ao_pote(self.aposta_atual)
+            elif acao == "Call":
+                jogador.pagar(self.aposta_atual)
+                self.adicionar_ao_pote(self.aposta_atual)
+            elif acao == "Check":
+                pass
+            
+            return [jogador.name, acao, self.pot, self.aposta_atual]
 
-        for jogador in ordem:
-            if jogador.active:
-                if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
-                    if acao == "Fold":
-                        jogador.active = False
-                    elif acao == "Raise":
-                        self.aposta_atual += 10
-                        jogador.pagar(self.aposta_atual)
-                        self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao == "Call":
-                        jogador.pagar(self.aposta_atual)
-                        self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao == "Check":
-                        pass
-                    
-                    lista_acao.append([jogador.name, acao, self.pot, self.aposta_atual])
+    def decide_acao_jogador_ia(self, jogador: Player):
+        if jogador.active:
+            if jogador.chips < self.aposta_atual:
+                jogador.active = False
+
+            acoes = []
+
+            if self.aposta_atual == 0:
+                acoes = ["Check", "Fold", "Fold"]
+            else:
+                acoes = ["Call", "Raise", "Fold"]
+
+            escolha = random.choices(acoes, weights=[0.8, 0.15, 0.05])[0]
+            return escolha
         
-                if jogador.name in ["Jogador 1", "Jogador 2", "Jogador 3"]:
-                    acao_ia = self.decidir_acao_jogador_ia(jogador)
-
-                    if acao_ia == "fold":
-                        jogador.active = False
-                    elif acao_ia == "raise":
-                        self.aposta_atual += 10
-                        jogador.pagar(self.aposta_atual)
-                        self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao_ia == "call":
-                        jogador.pagar(self.aposta_atual)
-                        self.adicionar_ao_pote(self.aposta_atual)
-                    elif acao_ia == "check":
-                        pass
-
-                    lista_acao.append([jogador.name, acao_ia, self.pot, self.aposta_atual])
-        
-        return lista_acao
-
-    def decidir_acao_jogador_ia(self, jogador: Player):
-        if jogador.chips < self.aposta_atual:
-            jogador.active = False
-
-        acoes = []
-
-        if self.aposta_atual == 0:
-            acoes = ["check", "check", "fold"]
         else:
-            acoes = ["call", "raise", "fold"]
-
-        escolha = random.choices(acoes, weights=[0.8, 0.15, 0.05])[0]
-        return escolha
+            return None
 
     def escolhe_vencedor(self):
         melhor_mao = None
