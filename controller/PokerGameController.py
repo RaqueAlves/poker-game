@@ -1,4 +1,5 @@
 from model.PokerGame import PokerGame
+from model.Player import Player
 from view.TerminalView import TerminalView
 
 class PokerGameController:
@@ -15,17 +16,16 @@ class PokerGameController:
 
         self.view.mostrar_jogadores(self.jogo.obter_dados_jogadores())
 
-        # Pré-flop
-        small_blind, big_blind = self.jogo.aplicar_blinds()
-        self.view.mostrar_blinds(small_blind, big_blind)
-        self.rodada_de_apostas()
-        self.jogo.resetar_aposta_atual()
+        #Pré-flop
+        self.primeira_rodada()
 
+        #Flop, Turn e River
         for i in range(0, 2):
-            # Flop
             self.jogo.flop()
             self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-            self.rodada_de_apostas()
+            ordem = self.jogo.ordem_apostas()
+            for jogador in ordem:
+                self.rodada_de_apostas(jogador)
             self.jogo.resetar_aposta_atual()
 
         # Final
@@ -33,16 +33,26 @@ class PokerGameController:
         self.view.mostrar_resultado(self.jogo.obter_resultado_jogadores())
         self.view.mostrar(f"\nVencedor: {jogador} com {combinacao} e carta mais alta: {carta}\n" \
               f"Ganhou {pot}fichas - Total: {chips}")
+    
+    def primeira_rodada(self):
+        # Pré-flop
+        small_blind, big_blind = self.jogo.aplicar_blinds()
+        self.view.mostrar_blinds(small_blind, big_blind)
         
-    def rodada_de_apostas(self):
         ordem = self.jogo.ordem_apostas()
 
         for jogador in ordem:
-            if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
-                acao = self.view.coletar_acoes()
-            else:
-                acao = self.jogo.decide_acao_jogador_ia(jogador)
+            if jogador.role not in ["small_blind", "big_blind"]:
+                self.rodada_de_apostas(jogador)
 
-            if acao is not None:
-                aposta = self.jogo.aplica_aposta(acao, jogador)
-                self.view.mostrar_escolha_jogador(aposta)
+        self.jogo.resetar_aposta_atual()
+        
+    def rodada_de_apostas(self, jogador: Player):
+        if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
+            acao = self.view.coletar_acoes()
+        else:
+            acao = self.jogo.decide_acao_jogador_ia(jogador)
+
+        if acao is not None:
+            aposta = self.jogo.aplica_aposta(acao, jogador)
+            self.view.mostrar_escolha_jogador(aposta)
