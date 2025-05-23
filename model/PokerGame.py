@@ -73,6 +73,9 @@ class PokerGame:
 
     def resetar_pote(self):
         self.pot = 0
+    
+    def resetar_aposta_atual(self):
+        self.aposta_atual = 0
 
     def aplica_aposta(self, acao, jogador: Player):
         if jogador.active:
@@ -115,7 +118,7 @@ class PokerGame:
         for jogador in self.players:
             if jogador.active:
                 result, mao_jogador = HandValue(jogador.hand, self.community_cards).calcular_forca()
-                print(mao_jogador)
+                # print(mao_jogador)
                 jogador.resultado = mao_jogador
 
                 if (melhor_mao is None or

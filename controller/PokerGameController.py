@@ -19,21 +19,14 @@ class PokerGameController:
         small_blind, big_blind = self.jogo.aplicar_blinds()
         self.view.mostrar_blinds(small_blind, big_blind)
         self.rodada_de_apostas()
+        self.jogo.resetar_aposta_atual()
 
-        # Flop
-        self.jogo.flop()
-        self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        self.rodada_de_apostas()
-
-        # Turn
-        self.jogo.proxima_rodada()
-        self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        self.rodada_de_apostas()
-
-        # River
-        self.jogo.proxima_rodada()
-        self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
-        self.rodada_de_apostas()
+        for i in range(0, 2):
+            # Flop
+            self.jogo.flop()
+            self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
+            self.rodada_de_apostas()
+            self.jogo.resetar_aposta_atual()
 
         # Final
         jogador, combinacao, carta, pot, chips = self.jogo.escolhe_vencedor()
@@ -45,7 +38,6 @@ class PokerGameController:
         ordem = self.jogo.ordem_apostas()
 
         for jogador in ordem:
-            print(jogador.name)
             if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
                 acao = self.view.coletar_acoes()
             else:
