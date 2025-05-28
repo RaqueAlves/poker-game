@@ -8,7 +8,7 @@ class PokerGameController:
         self.jogo = None
 
     def iniciar_jogo(self):
-        nome_usuario = self.view.solicitar_nome()
+        nome_usuario = self.view.iniciar_jogo()
         self.jogo = PokerGame(nome_usuario)
 
         self.jogo.atualizar_posicoes()
@@ -18,32 +18,47 @@ class PokerGameController:
 
         #Pré-flop
         self.primeira_rodada()
+        self.jogo.flop()
 
+        dicionario = {
+            0 : "Flop",
+            1 : "Turn",
+            2 : "River"
+        }
         #Flop, Turn e River
-        for i in range(0, 2):
-            self.jogo.flop()
+        for i in range(0, 3):
+            print(f"\n=== {dicionario[i]} ===\n")
+            self.jogo.proxima_rodada()
             self.view.mostrar_cartas_comunitarias(self.jogo.obter_dados_cartas_comunitarias())
+            
             ordem = self.jogo.ordem_apostas()
-            for jogador in ordem:
-                self.rodada_de_apostas(jogador)
+            while True:
+                for jogador in ordem:
+                    if jogador.active:
+                        self.rodada_de_apostas(jogador)
+                if self.jogo.todos_igualaram_a_aposta(ordem) == True:
+                    break
+                
             self.jogo.resetar_aposta_atual()
 
         # Final
         jogador, combinacao, carta, pot, chips = self.jogo.escolhe_vencedor()
         self.view.mostrar_resultado(self.jogo.obter_resultado_jogadores())
-        self.view.mostrar(f"\nVencedor: {jogador} com {combinacao} e carta mais alta: {carta}\n" \
-              f"Ganhou {pot}fichas - Total: {chips}")
+        self.view.mostrar_vencedor([jogador, combinacao, carta, pot, chips])
     
     def primeira_rodada(self):
         # Pré-flop
+        print("\n=== Pré Flop ===\n")
         small_blind, big_blind = self.jogo.aplicar_blinds()
         self.view.mostrar_blinds(small_blind, big_blind)
         
         ordem = self.jogo.ordem_apostas()
 
-        for jogador in ordem:
-            if jogador.role not in ["small_blind", "big_blind"]:
+        while True:
+            for jogador in ordem:
                 self.rodada_de_apostas(jogador)
+            if self.jogo.todos_igualaram_a_aposta(ordem) == True:
+                break
 
         self.jogo.resetar_aposta_atual()
         

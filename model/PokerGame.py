@@ -53,45 +53,58 @@ class PokerGame:
         small_blind_player.pagar(small_blind_valor)
         big_blind_player.pagar(big_blind_valor)
 
-        self.adicionar_ao_pote(small_blind_valor)
-        self.adicionar_ao_pote(big_blind_valor)
+        self.pot += small_blind_valor
+        self.pot += big_blind_valor
 
         self.aposta_atual = big_blind_valor
 
-        return small_blind_player.name, big_blind_player.name
+        small_blind = [small_blind_player.name, 
+                       small_blind_player.chips, 
+                       self.pot,
+                       self.aposta_atual]
+        big_blind = [big_blind_player.name,
+                     big_blind_player.chips,
+                     self.pot,
+                     self.aposta_atual]
+
+        return small_blind, big_blind
 
     def flop(self):
         self.deck.draw_card()  # Queima
-        self.community_cards = [self.deck.draw_card() for _ in range(3)]  # Flop
+        self.community_cards = [self.deck.draw_card() for _ in range(2)]  # Flop
 
     def proxima_rodada(self):
         self.deck.draw_card()  # Queima
         self.community_cards.append(self.deck.draw_card())  # Turn/River
-    
-    def adicionar_ao_pote(self, fichas):
-        self.pot += fichas
 
     def resetar_pote(self):
         self.pot = 0
     
     def resetar_aposta_atual(self):
         self.aposta_atual = 0
+        for jogador in self.players:
+            jogador.last_bet_made = 0
 
     def aplica_aposta(self, acao, jogador: Player):
         if jogador.active:
             if acao == "Fold":
                 jogador.active = False
             elif acao == "Raise":
-                self.aposta_atual += 10
-                jogador.pagar(self.aposta_atual)
-                self.adicionar_ao_pote(self.aposta_atual)
+                novo_valor = self.aposta_atual + 10
+                diferenca = novo_valor - jogador.last_bet_made
+                jogador.pagar(diferenca)
+                jogador.last_bet_made += diferenca
+                self.aposta_atual = novo_valor
+                self.pot += diferenca
             elif acao == "Call":
-                jogador.pagar(self.aposta_atual)
-                self.adicionar_ao_pote(self.aposta_atual)
+                diferenca = self.aposta_atual - jogador.last_bet_made
+                jogador.pagar(diferenca)
+                jogador.last_bet_made += diferenca
+                self.pot += diferenca
             elif acao == "Check":
                 pass
             
-            return [jogador.name, acao, self.pot, self.aposta_atual]
+            return [jogador.name, acao, jogador.chips, self.pot, self.aposta_atual]
 
     def decide_acao_jogador_ia(self, jogador: Player):
         if jogador.active:
@@ -110,6 +123,14 @@ class PokerGame:
         
         else:
             return None
+    
+    def todos_igualaram_a_aposta(self, ordem_jogadores):
+        for jogador in ordem_jogadores:
+            if not jogador.active:
+                continue
+            if jogador.last_bet_made != self.aposta_atual:
+                return False
+        return True
 
     def escolhe_vencedor(self):
         melhor_mao = None
@@ -118,8 +139,7 @@ class PokerGame:
         for jogador in self.players:
             if jogador.active:
                 result, mao_jogador = HandValue(jogador.hand, self.community_cards).calcular_forca()
-                # print(mao_jogador)
-                jogador.resultado = mao_jogador
+                jogador.result = mao_jogador
 
                 if (melhor_mao is None or
                     result[1] < melhor_mao[1] or
@@ -129,7 +149,7 @@ class PokerGame:
                     total = vencedor.chips + self.pot
                     vencedor.chips = total
 
-        return vencedor.name, melhor_mao[0], melhor_mao[2], self.pot, jogador.chips
+        return vencedor.name, melhor_mao[0], melhor_mao[2], self.pot, vencedor.chips
 
     def obter_dados_jogadores(self):
         return {
@@ -148,7 +168,7 @@ class PokerGame:
             "Resultado": [
                 {
                     "nome": player.name,
-                    "resultado": player.resultado
+                    "resultado": player.result
                 }
                 for player in self.players
             ]
