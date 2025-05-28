@@ -51,7 +51,9 @@ class PokerGame:
         big_blind_valor = 10
 
         small_blind_player.pagar(small_blind_valor)
+        small_blind_player.last_bet_made = small_blind_valor
         big_blind_player.pagar(big_blind_valor)
+        big_blind_player.last_bet_made = big_blind_valor
 
         self.pot += small_blind_valor
         self.pot += big_blind_valor
@@ -139,7 +141,8 @@ class PokerGame:
         for jogador in self.players:
             if jogador.active:
                 result, mao_jogador = HandValue(jogador.hand, self.community_cards).calcular_forca()
-                jogador.result = mao_jogador
+                jogador.hand_result = mao_jogador
+                jogador.result = result[0]
 
                 if (melhor_mao is None or
                     result[1] < melhor_mao[1] or
@@ -168,7 +171,8 @@ class PokerGame:
             "Resultado": [
                 {
                     "nome": player.name,
-                    "resultado": player.result
+                    "resultado": player.hand_result,
+                    "combinacao": player.result
                 }
                 for player in self.players
             ]

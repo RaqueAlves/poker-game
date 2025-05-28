@@ -26,7 +26,8 @@ class TerminalView:
         print("\n=== Mãos dos Jogadores ===")
         for resultado in dados["Resultado"]:
             print(f"Nome: {resultado["nome"]}")
-            print(f"Mão: {resultado["resultado"]}\n")
+            print(f"Mão: {resultado["resultado"]}")
+            print(f"Combinação: {resultado["combinacao"]}\n")
     
     def mostrar_blinds(self, small_blind, big_blind):
         print("\n=== Pagamento dos Blinds ===")

@@ -8,7 +8,8 @@ class Player:
         self.role = "normal"
         self.active = True
         self.last_bet_made = 0
-        self.result = []
+        self.hand_result = []
+        self.result = None
 
     @property
     def name(self):
@@ -71,11 +72,11 @@ class Player:
         self.__last_bet_made = last_bet_made
 
     @property
-    def result(self):
-        return self.__resultado
+    def hand_result(self):
+        return self.__hand_result
     
-    @result.setter
-    def result(self, resultado):
+    @hand_result.setter
+    def hand_result(self, resultado):
         if not isinstance(resultado, list):
             print("não é uma lista")
             return False
@@ -85,4 +86,12 @@ class Player:
                 print("não é uma carta")
                 return False
         
-        self.__resultado = resultado
+        self.__hand_result = resultado
+
+    @property
+    def result(self):
+        return self.__result
+    
+    @result.setter
+    def result(self, result):
+        self.__result = result
