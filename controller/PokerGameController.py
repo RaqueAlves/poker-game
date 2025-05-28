@@ -14,7 +14,14 @@ class PokerGameController:
         self.jogo.atualizar_posicoes()
         self.jogo.distribui_cartas()
 
-        self.view.mostrar_jogadores(self.jogo.obter_dados_jogadores())
+        for jogador in self.jogo.players:
+            if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
+                is_human = True
+            
+            else:
+                is_human = False
+
+            self.view.mostrar_jogador(self.jogo.obter_dados_jogadores(jogador), is_human)
 
         #Pré-flop
         self.primeira_rodada()
@@ -43,7 +50,7 @@ class PokerGameController:
 
         # Final
         jogador, combinacao, carta, pot, chips = self.jogo.escolhe_vencedor()
-        self.view.mostrar_resultado(self.jogo.obter_resultado_jogadores())
+        self.view.mostrar_resultado(self.jogo.obter_resultado_jogador())
         self.view.mostrar_vencedor([jogador, combinacao, carta, pot, chips])
     
     def primeira_rodada(self):
@@ -65,9 +72,11 @@ class PokerGameController:
     def rodada_de_apostas(self, jogador: Player):
         if jogador.name not in ["Jogador 1", "Jogador 2", "Jogador 3"]:
             acao = self.view.coletar_acoes()
+            is_human = True
         else:
             acao = self.jogo.decide_acao_jogador_ia(jogador)
+            is_human = False
 
         if acao is not None:
             aposta = self.jogo.aplica_aposta(acao, jogador)
-            self.view.mostrar_escolha_jogador(aposta)
+            self.view.mostrar_escolha_jogador(aposta, is_human)

@@ -154,19 +154,15 @@ class PokerGame:
 
         return vencedor.name, melhor_mao[0], melhor_mao[2], self.pot, vencedor.chips
 
-    def obter_dados_jogadores(self):
+    def obter_dados_jogadores(self, player: Player):
         return {
-            "jogadores": [
-                {
-                    "nome": player.name,
-                    "role": player.role,
-                    "cartas": [f"{card.rank} de {card.suit}" for card in player.hand]
+                "nome": player.name,
+                "role": player.role,
+                "cartas": [f"{card.rank} de {card.suit}" for card in player.hand]
                 }
-                for player in self.players
-            ]
-        }
+        
     
-    def obter_resultado_jogadores(self):
+    def obter_resultado_jogador(self):
         return {
             "Resultado": [
                 {
